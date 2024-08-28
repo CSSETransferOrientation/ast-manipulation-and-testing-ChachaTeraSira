@@ -78,13 +78,31 @@ class BinOpAst():
             case NodeType.operator:
                 return self.left.postfix_str() + ' ' + self.right.postfix_str() + ' ' + self.val
 
+    '''
+    self.left.val
+    self.right.val
+    recur left
+    recur right
+    if I am "+"
+        is either child a 0
+            replace me with non-zero child
+            if left == 0
+                right
+            else
+                left
+    '''
     def additive_identity(self):
         """
         Reduce additive identities
         x + 0 = x
         """
         # IMPLEMENT ME!
-        pass
+        if self.left.val == 0:
+            pass
+            # replace self with right child 
+        elif self.right.val == 0:
+            pass
+            # replace self with left child
                         
     def multiplicative_identity(self):
         """
@@ -92,7 +110,12 @@ class BinOpAst():
         x * 1 = x
         """
         # IMPLEMENT ME!
-        pass
+        if self.left.val == 1:
+            # replace the node with the right child
+            pass
+        elif self.right.val == 1:
+            # replace the node with the left child
+            pass
     
     
     def mult_by_zero(self):
@@ -101,7 +124,9 @@ class BinOpAst():
         x * 0 = 0
         """
         # Optionally, IMPLEMENT ME! (I'm pretty easy)
-        pass
+        if self.left.val == 0 or self.right.val == 0:
+            pass
+            # replace self with 0
     
     def constant_fold(self):
         """
