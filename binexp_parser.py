@@ -97,12 +97,23 @@ class BinOpAst():
         x + 0 = x
         """
         # IMPLEMENT ME!
-        if self.left.val == 0:
-            pass
-            # replace self with right child 
-        elif self.right.val == 0:
-            pass
-            # replace self with left child
+        if self.type == NodeType.number:
+            return
+        
+        self.left.additive_identity()
+        self.right.additive_identity()
+
+        if self.type == NodeType.operator and self.val == '+':
+            if self.left.val == '0':
+                self.val = self.right.val
+                self.type = NodeType.number
+                self.left = False
+                self.right = False
+            elif self.right.val == '0':
+                self.val = self.left.val
+                self.type = NodeType.number
+                self.left = False
+                self.right = False
                         
     def multiplicative_identity(self):
         """
@@ -152,6 +163,22 @@ class BinOpAst():
         self.mult_by_zero()
         self.constant_fold()
 
+class arith_id(unittest.TestCase):
+    def test_all_the_things(self):
+        ins = osjoin('binary_tree_files', 'inputs')
+        outs = osjoin('binary_tree_files', 'outputs')
+        for fname in os.listdir(ins):
+            with open(osjoin(ins, fname)) as f:
+                inp = f.read().strip()
+            with open(osjoin(outs, fname)) as f:
+                expected = int(f.read().strip())
+                with self.subTest(msg=f"Testing {fname}", inp=inp, expected=expected):
+                    print(inp)
+                    print(expected)
+                    ast = BinOpAst(inp.split())
+                    ast.additive_identity()
+                    self.assertEqual(ast.prefix_str(), expected)
 
 if __name__ == "__main__":
+    
     unittest.main()
