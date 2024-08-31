@@ -108,12 +108,23 @@ class BinOpAst():
         x * 1 = x
         """
         # IMPLEMENT ME!
-        if self.left.val == 1:
-            # replace the node with the right child
-            pass
-        elif self.right.val == 1:
-            # replace the node with the left child
-            pass
+        if self.type == NodeType.number:
+            return
+        
+        self.left.multiplicative_identity()
+        self.right.multiplicative_identity()
+
+        if self.type == NodeType.operator and self.val == '*':
+            if self.left.val == '1':
+                self.val = self.right.val
+                self.type = NodeType.number
+                self.left = False
+                self.right = False
+            elif self.right.val == '1':
+                self.val = self.left.val
+                self.type = NodeType.number
+                self.left = False
+                self.right = False
     
     
     def mult_by_zero(self):
@@ -122,9 +133,23 @@ class BinOpAst():
         x * 0 = 0
         """
         # Optionally, IMPLEMENT ME! (I'm pretty easy)
-        if self.left.val == 0 or self.right.val == 0:
-            pass
-            # replace self with 0
+        if self.type == NodeType.number:
+            return
+        
+        self.left.multiplicative_identity()
+        self.right.multiplicative_identity()
+
+        if self.type == NodeType.operator and self.val == '*':
+            if self.left.val == '0' or self.right.val == '0':
+                self.val = '0'
+                self.type = NodeType.number
+                self.left = False
+                self.right = False
+            # elif self.right.val == '0':
+            #     self.val = self.left.val
+            #     self.type = NodeType.number
+            #     self.left = False
+            #     self.right = False
     
     def constant_fold(self):
         """
@@ -180,6 +205,22 @@ class mult_id(unittest.TestCase):
                     print(expected)
                     ast = BinOpAst(inp.split())
                     ast.multiplicative_identity()
+                    self.assertEqual(ast.prefix_str(), expected)
+
+class mult_by_zero(unittest.TestCase):
+    def test_all_the_things(self):
+        ins = osjoin("testbench","mult_by_zero", 'inputs')
+        outs = osjoin("testbench","mult_by_zero", 'outputs')
+        for fname in os.listdir(ins):
+            with open(osjoin(ins, fname)) as f:
+                inp = f.read().strip()
+            with open(osjoin(outs, fname)) as f:
+                expected = f.read().strip()
+                with self.subTest(msg=f"Testing {fname}", inp=inp, expected=expected):
+                    print(inp)
+                    print(expected)
+                    ast = BinOpAst(inp.split())
+                    ast.mult_by_zero()
                     self.assertEqual(ast.prefix_str(), expected)
 
 if __name__ == "__main__":
