@@ -93,14 +93,14 @@ class BinOpAst():
         if self.type == NodeType.operator and self.val == '+':
             if self.left.val == '0':
                 self.val = self.right.val
-                self.type = NodeType.number
-                self.left = False
-                self.right = False
+                self.type = self.right.type
+                self.left = self.right.left
+                self.right = self.right.right
             elif self.right.val == '0':
                 self.val = self.left.val
-                self.type = NodeType.number
-                self.left = False
-                self.right = False
+                self.type = self.left.type
+                self.right = self.left.right
+                self.left = self.left.left
                         
     def multiplicative_identity(self):
         """
@@ -110,6 +110,8 @@ class BinOpAst():
         # IMPLEMENT ME!
         if self.type == NodeType.number:
             return
+        elif self.val == '+':
+            pass
         
         self.left.multiplicative_identity()
         self.right.multiplicative_identity()
@@ -117,14 +119,15 @@ class BinOpAst():
         if self.type == NodeType.operator and self.val == '*':
             if self.left.val == '1':
                 self.val = self.right.val
-                self.type = NodeType.number
-                self.left = False
-                self.right = False
+                self.type = self.right.type
+                self.left = self.right.left
+                self.right = self.right.right
             elif self.right.val == '1':
                 self.val = self.left.val
-                self.type = NodeType.number
-                self.left = False
-                self.right = False
+                self.type = self.left.type
+                self.right = self.left.right
+                self.left = self.left.left
+        return
     
     
     def mult_by_zero(self):
@@ -135,9 +138,11 @@ class BinOpAst():
         # Optionally, IMPLEMENT ME! (I'm pretty easy)
         if self.type == NodeType.number:
             return
+        elif self.val == '+':
+            pass
         
-        self.left.multiplicative_identity()
-        self.right.multiplicative_identity()
+        self.left.mult_by_zero()
+        self.right.mult_by_zero()
 
         if self.type == NodeType.operator and self.val == '*':
             if self.left.val == '0' or self.right.val == '0':
@@ -145,11 +150,6 @@ class BinOpAst():
                 self.type = NodeType.number
                 self.left = False
                 self.right = False
-            # elif self.right.val == '0':
-            #     self.val = self.left.val
-            #     self.type = NodeType.number
-            #     self.left = False
-            #     self.right = False
     
     def constant_fold(self):
         """
@@ -179,49 +179,60 @@ class arith_id(unittest.TestCase):
     def test_all_the_things(self):
         ins = osjoin("testbench","arith_id", 'inputs')
         outs = osjoin("testbench","arith_id", 'outputs')
+        print("ARITH_ID")
         for fname in os.listdir(ins):
             with open(osjoin(ins, fname)) as f:
                 inp = f.read().strip()
             with open(osjoin(outs, fname)) as f:
                 expected = f.read().strip()
                 with self.subTest(msg=f"Testing {fname}", inp=inp, expected=expected):
-                    print(inp)
-                    print(expected)
                     ast = BinOpAst(inp.split())
                     ast.additive_identity()
+                    print(f"Input:     {inp}")
+                    print(f"Expected:  {expected}")
+                    print(f"Output:    {ast.prefix_str()}\n")
                     self.assertEqual(ast.prefix_str(), expected)
+        print("\n")
 
 class mult_id(unittest.TestCase):
     def test_all_the_things(self):
         ins = osjoin("testbench","mult_id", 'inputs')
         outs = osjoin("testbench","mult_id", 'outputs')
+        print("MULT_ID")
         for fname in os.listdir(ins):
             with open(osjoin(ins, fname)) as f:
                 inp = f.read().strip()
             with open(osjoin(outs, fname)) as f:
                 expected = f.read().strip()
                 with self.subTest(msg=f"Testing {fname}", inp=inp, expected=expected):
-                    print(inp)
-                    print(expected)
                     ast = BinOpAst(inp.split())
                     ast.multiplicative_identity()
+                    print(f"Input:     {inp}")
+                    print(f"Expected:  {expected}")
+                    print(f"Output:    {ast.prefix_str()}\n")
                     self.assertEqual(ast.prefix_str(), expected)
+        print("\n")
 
 class mult_by_zero(unittest.TestCase):
     def test_all_the_things(self):
         ins = osjoin("testbench","mult_by_zero", 'inputs')
         outs = osjoin("testbench","mult_by_zero", 'outputs')
+        print("MULT_BY_ZERO")
         for fname in os.listdir(ins):
             with open(osjoin(ins, fname)) as f:
                 inp = f.read().strip()
             with open(osjoin(outs, fname)) as f:
                 expected = f.read().strip()
                 with self.subTest(msg=f"Testing {fname}", inp=inp, expected=expected):
-                    print(inp)
-                    print(expected)
+                    # print(f"{ins} in file <{fname}> = {inp}")
                     ast = BinOpAst(inp.split())
                     ast.mult_by_zero()
+                    print(f"Input:     {inp}")
+                    print(f"Expected:  {expected}")
+                    print(f"Output:    {ast.prefix_str()}\n")
+                    # print(f"{outs} in file <{fname}> = {ast.prefix_str()}")
                     self.assertEqual(ast.prefix_str(), expected)
+        print("\n")
 
 if __name__ == "__main__":
     unittest.main()
