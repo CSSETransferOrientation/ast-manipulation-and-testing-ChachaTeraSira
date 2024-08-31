@@ -78,19 +78,6 @@ class BinOpAst():
             case NodeType.operator:
                 return self.left.postfix_str() + ' ' + self.right.postfix_str() + ' ' + self.val
 
-    '''
-    self.left.val
-    self.right.val
-    recur left
-    recur right
-    if I am "+"
-        is either child a 0
-            replace me with non-zero child
-            if left == 0
-                right
-            else
-                left
-    '''
     def additive_identity(self):
         """
         Reduce additive identities
@@ -165,13 +152,13 @@ class BinOpAst():
 
 class arith_id(unittest.TestCase):
     def test_all_the_things(self):
-        ins = osjoin('binary_tree_files', 'inputs')
-        outs = osjoin('binary_tree_files', 'outputs')
+        ins = osjoin("testbench","arith_id", 'inputs')
+        outs = osjoin("testbench","arith_id", 'outputs')
         for fname in os.listdir(ins):
             with open(osjoin(ins, fname)) as f:
                 inp = f.read().strip()
             with open(osjoin(outs, fname)) as f:
-                expected = int(f.read().strip())
+                expected = f.read().strip()
                 with self.subTest(msg=f"Testing {fname}", inp=inp, expected=expected):
                     print(inp)
                     print(expected)
@@ -179,6 +166,21 @@ class arith_id(unittest.TestCase):
                     ast.additive_identity()
                     self.assertEqual(ast.prefix_str(), expected)
 
+class mult_id(unittest.TestCase):
+    def test_all_the_things(self):
+        ins = osjoin("testbench","mult_id", 'inputs')
+        outs = osjoin("testbench","mult_id", 'outputs')
+        for fname in os.listdir(ins):
+            with open(osjoin(ins, fname)) as f:
+                inp = f.read().strip()
+            with open(osjoin(outs, fname)) as f:
+                expected = f.read().strip()
+                with self.subTest(msg=f"Testing {fname}", inp=inp, expected=expected):
+                    print(inp)
+                    print(expected)
+                    ast = BinOpAst(inp.split())
+                    ast.multiplicative_identity()
+                    self.assertEqual(ast.prefix_str(), expected)
+
 if __name__ == "__main__":
-    
     unittest.main()
