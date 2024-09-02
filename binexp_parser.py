@@ -110,7 +110,7 @@ class BinOpAst():
         # IMPLEMENT ME!
         if self.type == NodeType.number:
             return
-        elif self.val == '+':
+        elif self.val == '+': # ;;> It's a bit confusing to check for this then just do nothing 
             pass
         
         self.left.multiplicative_identity()
@@ -236,3 +236,5 @@ class mult_by_zero(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+# ;;> Overall looks good! Could use some clean up and you might consider removing the prints all over in your tests

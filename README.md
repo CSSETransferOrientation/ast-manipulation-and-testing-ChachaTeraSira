@@ -1,5 +1,6 @@
 # Binary Operator Simplifier 
 
+# ;;> did not update readme
 
 ## Purpose 
 
